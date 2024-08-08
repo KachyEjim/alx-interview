@@ -4,7 +4,8 @@
 
 def minOperations(n: int) -> int:
     """RETURN THE NUMBER OF STEPS"""
-    if n <= 1:
+
+    if not isinstance(n, int) or n <= 1:
         return 0
 
     operations: int = 0
