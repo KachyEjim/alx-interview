@@ -1,8 +1,9 @@
 #!/usr/bin/python3
-"""Pythom file"""
+
+""" Minimum Operations """
 
 
-def minOperations(n: int) -> int:
+def minOperations(n):
     """RETURN THE NUMBER OF STEPS"""
 
     if not isinstance(n, int) or n <= 1:
