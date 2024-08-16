@@ -1,8 +1,10 @@
 #!/usr/bin/python3
-"""Python file"""
+"""Script to parse log data and compute metrics."""
+
 import sys
 import re
 
+# Dictionary to store the count of each status code
 STATUS_CODE = {
     "200": 0,
     "301": 0,
@@ -13,40 +15,46 @@ STATUS_CODE = {
     "405": 0,
     "500": 0,
 }
+
 regex = (
     r"^(\d{1,3}\.){3}\d{1,3}\s-\s\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+\]"
     r'\s"GET /projects/\d+ HTTP/1\.1"\s(\d{3})\s(\d+)$'
 )
+
+# Initialize counters
 count = 0
 size = 0
 
 
-def print_func():
-    """Print function"""
+def print_metrics():
+    """Function to print the accumulated metrics."""
     print(f"File size: {size}")
-    for status, value in STATUS_CODE.items():
-        if value:
+    for status, value in sorted(STATUS_CODE.items()):
+        if value > 0:
             print(f"{status}: {value}")
 
 
-print("here")
 if __name__ == "__main__":
     try:
         for line in sys.stdin:
-            count += 1
             match = re.match(regex, line)
-            if not re.match(regex, line):
+            if not match:
                 continue
-            file_size = match.group(3)
+
             status_code = match.group(2)
+            file_size = match.group(3)
+
             size += int(file_size)
 
-            if status_code in STATUS_CODE.keys():
+            if status_code in STATUS_CODE:
                 STATUS_CODE[status_code] += 1
-                if count == 10:
-                    print_func()
-                    count = 0
+
+            count += 1
+
+            if count == 10:
+                print_metrics()
+                count = 0
 
     except KeyboardInterrupt:
-        print_func()
-        count = 0
+        print_metrics()
+        raise
