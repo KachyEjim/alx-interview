@@ -2,10 +2,11 @@
 """Log Parser"""
 import sys
 
-
 if __name__ == "__main__":
     file_size = [0]
-    status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+    status_codes = {200: 0, 301: 0,
+                    400: 0, 401: 0, 403: 0,
+                    404: 0, 405: 0, 500: 0}
 
     def print_stats():
         """Print statistics"""
@@ -19,11 +20,8 @@ if __name__ == "__main__":
         try:
             line = line[:-1]
             word = line.split(" ")
-            # File size is last parameter on stdout
             file_size[0] += int(word[-1])
-            # Status code comes before file size
             status_code = int(word[-2])
-            # Move through dictionary of status codes
             if status_code in status_codes:
                 status_codes[status_code] += 1
         except BaseException:
