@@ -1,44 +1,35 @@
 #!/usr/bin/python3
-"""Module for validUtf8 method"""
+"""Python file"""
 
 
 def validUTF8(data):
-    """Determines if given data represents valid UTF-8 encoding
-    Args:
-        data: list of integers
-    Returns:
-        True if valid UTF-8 encoding, otherwise False
-    """
-    # Number of bytes in the current UTF-8 character
-    n_bytes = 0
+    num_bytes = 0
 
-    # Mask to check if the most significant bit is set or not
     mask1 = 1 << 7
-
-    # Mask to check if the second most significant bit is set or not
     mask2 = 1 << 6
-    for num in data:
+    for byte in data:
+        byte = byte & 0xFF
 
-        # Get the number of set most significant bits in the byte if
-        # this is the starting byte of an UTF-8 character.
-        mask = 1 << 7
-        if n_bytes == 0:
-            while mask & num:
-                n_bytes += 1
-                mask = mask >> 1
-
-            # 1 byte characters
-            if n_bytes == 0:
+        if num_bytes == 0:
+            if (byte & mask1) == 0:
                 continue
-
-            # Invalid scenarios according to the rules of the problem.
-            if n_bytes == 1 or n_bytes > 4:
+            elif (byte & (mask1 | mask2)) == mask1:
+                return False
+            elif (byte & (mask1 | mask2 | (1 << 5))) == (mask1 | mask2):
+                num_bytes = 1
+            elif (byte & (mask1 | mask2 | (1 << 5) | (1 << 4))) == (
+                mask1 | mask2 | (1 << 5)
+            ):
+                num_bytes = 2
+            elif (byte & (mask1 | mask2 | (1 << 5) | (1 << 4) | (1 << 3))) == (
+                mask1 | mask2 | (1 << 5) | (1 << 4)
+            ):
+                num_bytes = 3
+            else:
                 return False
         else:
-            # If this byte is a part of an existing UTF-8 character, then we
-            # simply have to look at the two most significant bits and we make
-            # use of the masks we defined before.
-            if not (num & mask1 and not (num & mask2)):
+            if (byte & (mask1 | mask2)) != mask1:
                 return False
-        n_bytes -= 1
-    return n_bytes == 0
+            num_bytes -= 1
+
+    return num_bytes == 0
