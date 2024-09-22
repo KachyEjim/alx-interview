@@ -18,7 +18,7 @@ def makeChange(coins, total):
     return temp_value if total == 0 else -1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     print(makeChange([1, 2, 25], 37))
 
